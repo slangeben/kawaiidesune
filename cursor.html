@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>kawaiidesune!!!</title>
+
+<!--  ♪♫❤✩✧✿ ♡ ⋆｡❀ ࿔ CUTE CLICKSPLOTION CURSOR EFFECT * ☆ ★ ✮ ✧・❥ ⊹ */
+/*                  ✧༺♥༻✧╔══ஓ๑♡๑ஓ══╗ ✧༺♥༻✧
+                    ✦ MARIA LANDE LUND, 2025 ✦
+                  ✧༺♥༻✧  ╚══ஓ๑♡๑ஓ══╝ ✧༺♥༻✧ -->
+<style>
+  body {
+    cursor: auto;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .symbol {
+    position: absolute;
+    font-size: 8px; /* edit for symbol size */
+    pointer-events: none;
+    user-select: none;
+    color: black;
+    transition: transform 0.1s ease;
+  }
+</style>
+</head>
+<body>
+
+<script>
+
+  const symbols = ["♪","♫","✩","✧","✿","♡","⋆","｡","❀","࿔","*","☆","★","✮","✧","・","❥"];
+  let isDrawing = false;
+
+  function createSymbol(x, y, spread = 50) {
+    const symbol = document.createElement("div");
+    symbol.classList.add("symbol");
+    symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+
+    const offsetX = (Math.random() - 0.5) * spread * 2;
+    const offsetY = (Math.random() - 0.5) * spread * 2;
+    symbol.style.left = x + offsetX + "px";
+    symbol.style.top = y + offsetY + "px";
+
+    document.body.appendChild(symbol);
+
+    setTimeout(() => symbol.remove(), 300 + Math.random() * 700);
+  }
+
+  document.addEventListener("mousedown", e => {
+    isDrawing = true;
+    // burst on click
+    for (let i = 0; i < 10; i++) { // number of symbols in the burst
+      createSymbol(e.clientX, e.clientY, 50); // increase this number for larger spread
+    }
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDrawing = false;
+  });
+
+  document.addEventListener("mousemove", e => {
+    if (isDrawing) {
+      // smaller trail symbols while dragging
+      createSymbol(e.clientX, e.clientY, );
+    }
+  });
+</script>
+
+</body>
+</html>
