@@ -10,6 +10,9 @@
 /*                  ✧༺♥༻✧╔══ஓ๑♡๑ஓ══╗ ✧༺♥༻✧
                     ✦ MARIA LANDE LUND, 2025 ✦
                   ✧༺♥༻✧  ╚══ஓ๑♡๑ஓ══╝ ✧༺♥༻✧ -->
+<!-- ⋆˚✿˖° 
+  css code  ཐིཋྀ ‧₊˚❀༉‧₊˚.
+  .𖥔 ݁ ˖.𖥔 ݁ ˖.𖥔 ݁ ˖. ݁₊ ⊹ . ݁˖ . ݁.𖥔 ݁ ˖-->
 <style>
   body {
     cursor: auto;
@@ -56,9 +59,52 @@
   input[type="color"] {
     cursor: pointer;
   }
+  input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: #ffcce6; 
+  border-radius: 3px;
+  outline: none;
+}
+
+/* firefox */
+input[type="range"]::-moz-range-track {
+  background: #ffcce6;
+  height: 6px;
+  border-radius: 3px;
+}
+
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #ff99cc; 
+  border-radius: 50%;
+  border: 1px solid white;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #ff99cc;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+}
+
 </style>
 </head>
 <body>
+
+ <!-- ✧༺♥༻✧╔══ஓ๑♡๑ஓ══╗ ✧༺♥༻✧
+            ✦ controls ✦
+    ✧༺♥༻✧  ╚══ஓ๑♡๑ஓ══╝ ✧༺♥༻✧ -->
 
 <div class="controls">
   <label>size:<input type="range" id="sizeSlider" min="5" max="50" value="12"></label>
@@ -75,6 +121,9 @@
 </div>
 
 <script>
+  ////////////////////////////////////////////////////////////////////////////////////////
+  ////////// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･symbols array, add more here °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･ ////////////
+  ///////////////////////////////////////////////////////////////////////////////////////
   const symbols = ["♪","♫","✩","✧","✿","♡","⋆","｡","❀","࿔","*","☆","★","✮","✧","・","❥"];
   let isDrawing = false;
 
@@ -86,10 +135,10 @@
     opacity: 1,
     gravity: 0,
     sizeRand: 5,
-    color: "#000000",
-    randomColors: false,
+    colour: "#000000",
+    randomColours: false,
     bg: "#ffffff",
-    trail: false
+    fairyDust: false
   };
 
   const controls = {
@@ -153,6 +202,9 @@
     animate();
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･mouse events °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･ ////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////
   document.addEventListener("mousedown", e => {
     isDrawing = true;
     for (let i = 0; i < settings.count; i++) {
@@ -169,6 +221,49 @@
       createSymbol(e.clientX, e.clientY);
     }
   });
+
+   ////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･touch events °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･ ////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////
+  document.addEventListener("touchstart", e => {
+    isDrawing = true;
+    const touch = e.touches[0];
+    for (let i = 0; i < 10; i++) createSymbol(touch.clientX, touch.clientY, 50);
+  });
+  document.addEventListener("touchend", () => isDrawing = false);
+  document.addEventListener("touchmove", e => {
+    if (isDrawing) {
+      const touch = e.touches[0];
+      createSymbol(touch.clientX, touch.clientY, 20);
+    }
+  });
+
+  /////////////////////////////////////////////////////////////////////////////////
+// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･console log values °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･//////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+
+  function logSettings() {
+  console.clear();
+  console.log("꧁⎝ 𓆩༺ values ༻𓆪 ⎠꧂");
+  console.table(settings);
+}
+
+// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･log change °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･
+for (let id in controls) {
+  const el = document.getElementById(id);
+  if (el.type === "checkbox") {
+    el.addEventListener("change", e => {
+      controls[id](e.target.checked);
+      logSettings();
+    });
+  } else {
+    el.addEventListener("input", e => {
+      controls[id](e.target.value);
+      logSettings();
+    });
+  }
+}
+
 </script>
 
 
