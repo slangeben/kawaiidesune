@@ -97,6 +97,21 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   box-shadow: 0 0 4px rgba(0,0,0,0.2);
 }
+p {
+  font-family: Helvetica, sans-serif;
+  margin: 2%;
+
+}
+.footer {
+  position: fixed;
+  bottom: 1px;
+  width: 100%;
+  text-align: right;
+  font-size: 12px;
+  right: 10px;
+  color: black;
+  pointer-events: none; 
+}
 
 </style>
 </head>
@@ -117,19 +132,16 @@ input[type="range"]::-moz-range-thumb {
   <label>colour:<input type="color" id="colorPicker" value="#000000"></label>
   <label><input type="checkbox" id="randomColorToggle"> random colour </label>
   <label>bg:<input type="color" id="bgPicker" value="#ffffff"></label>
-  <label><input type="checkbox" id="trailToggle">fairy dust mode ָ ʚଓ་༘࿐</label>
+  <label><input type="checkbox" id="trailToggle">fairy dust ָ ʚଓ་༘࿐</label>
+   
 </div>
-
+<p class="footer">made with ♡ by maria lande lund © 2025</p>
 <script>
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･symbols array, add more here °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･ ////////////
   ///////////////////////////////////////////////////////////////////////////////////////
   const symbols = ["♪","♫","✩","✧","✿","♡","⋆","｡","❀","࿔","*","☆","★","✮","✧","・","❥"];
   let isDrawing = false;
-
-   ////////////////////////////////////////////////////////////////////////////////////////
-  ////////// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･settings °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･ ////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////
 
   let settings = {
     size: 12,
@@ -273,3 +285,4 @@ for (let id in controls) {
 
 </body>
 </html>
+
