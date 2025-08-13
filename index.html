@@ -15,45 +15,148 @@
     cursor: auto;
     overflow: hidden;
     height: 100vh;
+    margin: 0;
+    background: #fff;
   }
 
   .symbol {
     position: absolute;
-    font-size: 8px; /* edit for symbol size */
     pointer-events: none;
     user-select: none;
-    color: black;
-    transition: transform 0.1s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    will-change: transform, opacity;
+  }
+
+  .controls {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.9);
+    padding: 10px;
+    border-radius: 12px;
+    font-family: sans-serif;
+    font-size: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    max-width: 95%;
+  }
+
+  .controls label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  input[type="range"],
+  input[type="color"] {
+    cursor: pointer;
   }
 </style>
 </head>
 <body>
 
-<script>
+<div class="controls">
+  <label>size:<input type="range" id="sizeSlider" min="5" max="50" value="12"></label>
+  <label>spread:<input type="range" id="spreadSlider" min="10" max="200" value="50"></label>
+  <label>count:<input type="range" id="countSlider" min="1" max="50" value="10"></label>
+  <label>lifetime(ms):<input type="range" id="lifeSlider" min="100" max="3000" value="800"></label>
+  <label>opacity:<input type="range" id="opacitySlider" min="0.1" max="1" step="0.05" value="1"></label>
+  <label>gravity:<input type="range" id="gravitySlider" min="-2" max="5" step="0.1" value="0"></label>
+  <label>size rand:<input type="range" id="sizeRandSlider" min="0" max="30" value="5"></label>
+  <label>colour:<input type="color" id="colorPicker" value="#000000"></label>
+  <label><input type="checkbox" id="randomColorToggle"> random colour </label>
+  <label>bg:<input type="color" id="bgPicker" value="#ffffff"></label>
+  <label><input type="checkbox" id="trailToggle">fairy dust mode ָ ʚଓ་༘࿐</label>
+</div>
 
+<script>
   const symbols = ["♪","♫","✩","✧","✿","♡","⋆","｡","❀","࿔","*","☆","★","✮","✧","・","❥"];
   let isDrawing = false;
 
-  function createSymbol(x, y, spread = 50) {
+  let settings = {
+    size: 12,
+    spread: 50,
+    count: 10,
+    lifetime: 800,
+    opacity: 1,
+    gravity: 0,
+    sizeRand: 5,
+    color: "#000000",
+    randomColors: false,
+    bg: "#ffffff",
+    trail: false
+  };
+
+  const controls = {
+    sizeSlider: val => settings.size = parseInt(val),
+    spreadSlider: val => settings.spread = parseInt(val),
+    countSlider: val => settings.count = parseInt(val),
+    lifeSlider: val => settings.lifetime = parseInt(val),
+    opacitySlider: val => settings.opacity = parseFloat(val),
+    gravitySlider: val => settings.gravity = parseFloat(val),
+    sizeRandSlider: val => settings.sizeRand = parseInt(val),
+    colorPicker: val => settings.color = val,
+    randomColorToggle: val => settings.randomColors = val,
+    bgPicker: val => { settings.bg = val; document.body.style.backgroundColor = val; },
+    trailToggle: val => settings.trail = val
+  };
+
+  for (let id in controls) {
+    const el = document.getElementById(id);
+    if (el.type === "checkbox") {
+      el.addEventListener("change", e => controls[id](e.target.checked));
+    } else {
+      el.addEventListener("input", e => controls[id](e.target.value));
+    }
+  }
+
+  function getRandomColor() {
+    return `hsl(${Math.floor(Math.random() * 360)}, 80%, 60%)`;
+  }
+
+  function createSymbol(x, y) {
     const symbol = document.createElement("div");
     symbol.classList.add("symbol");
     symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
-    const offsetX = (Math.random() - 0.5) * spread * 2;
-    const offsetY = (Math.random() - 0.5) * spread * 2;
+    const sizeVariation = (Math.random() - 0.5) * settings.sizeRand * 2;
+    symbol.style.fontSize = (settings.size + sizeVariation) + "px";
+    symbol.style.opacity = settings.opacity;
+    symbol.style.color = settings.randomColors ? getRandomColor() : settings.color;
+
+    const offsetX = (Math.random() - 0.5) * settings.spread * 2;
+    const offsetY = (Math.random() - 0.5) * settings.spread * 2;
     symbol.style.left = x + offsetX + "px";
     symbol.style.top = y + offsetY + "px";
 
+    let dy = settings.gravity;
+
     document.body.appendChild(symbol);
 
-    setTimeout(() => symbol.remove(), 300 + Math.random() * 700);
+    let startTime = Date.now();
+    function animate() {
+      let elapsed = Date.now() - startTime;
+      if (dy !== 0) {
+        symbol.style.top = parseFloat(symbol.style.top) + dy + "px";
+      }
+      if (elapsed >= settings.lifetime) {
+        symbol.remove();
+      } else {
+        requestAnimationFrame(animate);
+      }
+    }
+    animate();
   }
 
   document.addEventListener("mousedown", e => {
     isDrawing = true;
-    // burst on click
-    for (let i = 0; i < 10; i++) { // number of symbols in the burst
-      createSymbol(e.clientX, e.clientY, 50); // increase this number for larger spread
+    for (let i = 0; i < settings.count; i++) {
+      createSymbol(e.clientX, e.clientY);
     }
   });
 
@@ -62,12 +165,12 @@
   });
 
   document.addEventListener("mousemove", e => {
-    if (isDrawing) {
-      // smaller trail symbols while dragging
-      createSymbol(e.clientX, e.clientY, );
+    if (isDrawing && settings.trail) {
+      createSymbol(e.clientX, e.clientY);
     }
   });
 </script>
+
 
 </body>
 </html>
