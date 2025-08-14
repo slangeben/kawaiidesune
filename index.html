@@ -60,58 +60,58 @@
     cursor: pointer;
   }
   input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  background: #ffcce6; 
-  border-radius: 3px;
-  outline: none;
-}
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: #ffcce6; 
+    border-radius: 3px;
+    outline: none;
+  }
 
-/* firefox */
-input[type="range"]::-moz-range-track {
-  background: #ffcce6;
-  height: 6px;
-  border-radius: 3px;
-}
+  /* firefox */
+  input[type="range"]::-moz-range-track {
+    background: #ffcce6;
+    height: 6px;
+    border-radius: 3px;
+  }
 
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #ff99cc; 
+    border-radius: 50%;
+    border: 1px solid white;
+    cursor: pointer;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+  }
 
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: #ff99cc; 
-  border-radius: 50%;
-  border: 1px solid white;
-  cursor: pointer;
-  box-shadow: 0 0 4px rgba(0,0,0,0.2);
-}
+  input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #ff99cc;
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+  }
 
-input[type="range"]::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  background: #ff99cc;
-  border-radius: 50%;
-  border: 2px solid white;
-  cursor: pointer;
-  box-shadow: 0 0 4px rgba(0,0,0,0.2);
-}
-p {
-  font-family: Helvetica, sans-serif;
-  margin: 2%;
+  p {
+    font-family: Helvetica, sans-serif;
+    margin: 2%;
+  }
 
-}
-.footer {
-  position: fixed;
-  bottom: 1px;
-  width: 100%;
-  text-align: right;
-  font-size: 12px;
-  right: 10px;
-  color: black;
-  pointer-events: none; 
-}
+  .footer {
+    position: fixed;
+    bottom: 1px;
+    width: 100%;
+    text-align: right;
+    font-size: 12px;
+    right: 10px;
+    color: black;
+    pointer-events: none; 
+  }
 
 </style>
 </head>
@@ -133,9 +133,10 @@ p {
   <label><input type="checkbox" id="randomColorToggle"> random colour </label>
   <label>bg:<input type="color" id="bgPicker" value="#ffffff"></label>
   <label><input type="checkbox" id="trailToggle">fairy dust ָ ʚଓ་༘࿐</label>
-   
+  <label><input type="checkbox" id="pauseLifeToggle">draw</label>
 </div>
 <p class="footer">made with ♡ by maria lande lund © 2025</p>
+
 <script>
   ////////////////////////////////////////////////////////////////////////////////////////
   ////////// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･symbols array, add more here °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･ ////////////
@@ -152,9 +153,10 @@ p {
     gravity: 0,
     sizeRand: 5,
     colour: "#000000",
-    randomColours: false,
+    randomColors: false,
     bg: "#ffffff",
-    fairyDust: false
+    trail: false,
+    pauseLife: false
   };
 
   const controls = {
@@ -168,7 +170,8 @@ p {
     colorPicker: val => settings.color = val,
     randomColorToggle: val => settings.randomColors = val,
     bgPicker: val => { settings.bg = val; document.body.style.backgroundColor = val; },
-    trailToggle: val => settings.trail = val
+    trailToggle: val => settings.trail = val,
+    pauseLifeToggle: val => settings.pauseLife = val
   };
 
   for (let id in controls) {
@@ -203,19 +206,21 @@ p {
 
     document.body.appendChild(symbol);
 
-    let startTime = Date.now();
-    function animate() {
-      let elapsed = Date.now() - startTime;
-      if (dy !== 0) {
-        symbol.style.top = parseFloat(symbol.style.top) + dy + "px";
+    if (!settings.pauseLife) {
+      let startTime = Date.now();
+      function animate() {
+        let elapsed = Date.now() - startTime;
+        if (dy !== 0) {
+          symbol.style.top = parseFloat(symbol.style.top) + dy + "px";
+        }
+        if (elapsed >= settings.lifetime) {
+          symbol.remove();
+        } else {
+          requestAnimationFrame(animate);
+        }
       }
-      if (elapsed >= settings.lifetime) {
-        symbol.remove();
-      } else {
-        requestAnimationFrame(animate);
-      }
+      animate();
     }
-    animate();
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////
@@ -228,61 +233,41 @@ p {
     }
   });
 
-  document.addEventListener("mouseup", () => {
+  document.addEventListener("mousemove", e => {
+    if (isDrawing) {
+      for (let i = 0; i < settings.count; i++) {
+        createSymbol(e.clientX, e.clientY);
+      }
+    }
+  });
+
+  document.addEventListener("mouseup", e => {
     isDrawing = false;
   });
 
-  document.addEventListener("mousemove", e => {
-    if (isDrawing && settings.trail) {
-      createSymbol(e.clientX, e.clientY);
-    }
-  });
-
-   ////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･touch events °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･ ////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////
   document.addEventListener("touchstart", e => {
     isDrawing = true;
     const touch = e.touches[0];
-    for (let i = 0; i < 10; i++) createSymbol(touch.clientX, touch.clientY, 50);
-  });
-  document.addEventListener("touchend", () => isDrawing = false);
-  document.addEventListener("touchmove", e => {
-    if (isDrawing) {
-      const touch = e.touches[0];
-      createSymbol(touch.clientX, touch.clientY, 20);
+    for (let i = 0; i < settings.count; i++) {
+      createSymbol(touch.clientX, touch.clientY);
     }
   });
 
-  /////////////////////////////////////////////////////////////////////////////////
-// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･console log values °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･//////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
+  document.addEventListener("touchmove", e => {
+    if (isDrawing) {
+      const touch = e.touches[0];
+      for (let i = 0; i < settings.count; i++) {
+        createSymbol(touch.clientX, touch.clientY);
+      }
+    }
+  });
 
-  function logSettings() {
-  console.clear();
-  console.log("꧁⎝ 𓆩༺ values ༻𓆪 ⎠꧂");
-  console.table(settings);
-}
-
-// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･log change °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･
-for (let id in controls) {
-  const el = document.getElementById(id);
-  if (el.type === "checkbox") {
-    el.addEventListener("change", e => {
-      controls[id](e.target.checked);
-      logSettings();
-    });
-  } else {
-    el.addEventListener("input", e => {
-      controls[id](e.target.value);
-      logSettings();
-    });
-  }
-}
+  document.addEventListener("touchend", e => {
+    isDrawing = false;
+  });
 
 </script>
 
 
 </body>
 </html>
-
