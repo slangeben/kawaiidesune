@@ -117,10 +117,6 @@
 </head>
 <body>
 
- <!-- ✧༺♥༻✧╔══ஓ๑♡๑ஓ══╗ ✧༺♥༻✧
-            ✦ controls ✦
-    ✧༺♥༻✧  ╚══ஓ๑♡๑ஓ══╝ ✧༺♥༻✧ -->
-
 <div class="controls">
   <label>size:<input type="range" id="sizeSlider" min="5" max="50" value="12"></label>
   <label>spread:<input type="range" id="spreadSlider" min="10" max="200" value="50"></label>
@@ -138,9 +134,6 @@
 <p class="footer">made with ♡ by maria lande lund © 2025</p>
 
 <script>
-  ////////////////////////////////////////////////////////////////////////////////////////
-  ////////// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･symbols array, add more here °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･ ////////////
-  ///////////////////////////////////////////////////////////////////////////////////////
   const symbols = ["♪","♫","✩","✧","✿","♡","⋆","｡","❀","࿔","*","☆","★","✮","✧","・","❥"];
   let isDrawing = false;
 
@@ -188,44 +181,33 @@
   }
 
   function createSymbol(x, y) {
-    const symbol = document.createElement("div");
-    symbol.classList.add("symbol");
-    symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+  const symbol = document.createElement("div");
+  symbol.classList.add("symbol");
+  symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
-    const sizeVariation = (Math.random() - 0.5) * settings.sizeRand * 2;
-    symbol.style.fontSize = (settings.size + sizeVariation) + "px";
-    symbol.style.opacity = settings.opacity;
-    symbol.style.color = settings.randomColors ? getRandomColor() : settings.color;
+  const sizeVariation = (Math.random() - 0.5) * settings.sizeRand * 2;
+  symbol.style.fontSize = (settings.size + sizeVariation) + "px";
+  symbol.style.opacity = settings.opacity;
+  symbol.style.color = settings.randomColors ? getRandomColor() : settings.color;
 
-    const offsetX = (Math.random() - 0.5) * settings.spread * 2;
-    const offsetY = (Math.random() - 0.5) * settings.spread * 2;
-    symbol.style.left = x + offsetX + "px";
-    symbol.style.top = y + offsetY + "px";
+  const offsetX = (Math.random() - 0.5) * settings.spread * 2;
+  const offsetY = (Math.random() - 0.5) * settings.spread * 2;
+  symbol.style.left = x + offsetX + "px";
+  symbol.style.top = y + offsetY + "px";
 
-    let dy = settings.gravity;
+  document.body.appendChild(symbol);
 
-    document.body.appendChild(symbol);
-
-    if (!settings.pauseLife) {
-      let startTime = Date.now();
-      function animate() {
-        let elapsed = Date.now() - startTime;
-        if (dy !== 0) {
-          symbol.style.top = parseFloat(symbol.style.top) + dy + "px";
-        }
-        if (elapsed >= settings.lifetime) {
-          symbol.remove();
-        } else {
-          requestAnimationFrame(animate);
-        }
-      }
-      animate();
-    }
+  if (settings.trail) {
+    // fairy dust mode: slowly fade out over lifetime
+    symbol.style.transition = `opacity ${settings.lifetime}ms ease, transform ${settings.lifetime}ms ease`;
+    setTimeout(() => symbol.style.opacity = 0, 50); // start fading
+    setTimeout(() => symbol.remove(), settings.lifetime);
+  } else if (!settings.pauseLife) {
+    // default pop-in-pop-out
+    setTimeout(() => symbol.remove(), 300 + Math.random() * 700);
   }
+}
 
-  ////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////// °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･mouse events °❀⋆.ೃ࿔*:･°❀⋆.ೃ࿔*:･ ////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////
   document.addEventListener("mousedown", e => {
     isDrawing = true;
     for (let i = 0; i < settings.count; i++) {
@@ -267,7 +249,6 @@
   });
 
 </script>
-
-
 </body>
 </html>
+
